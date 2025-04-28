@@ -82,14 +82,15 @@ button {
 
 /* Button specific */
 button {
-  background-color: #99231b;
+  background-color: #c62d1f;
   color: #f1f1f1;
   cursor: pointer;
   transition: 0.2s ease-in-out;
+  font-weight: bolder;
 }
 
 button:hover {
-  background-color: #bfbfbf;
+  background-color: #99231b;
 }
 
 /* Stack horizontally on wider screens */
@@ -119,15 +120,21 @@ button:hover {
   flex: 1 1 100%;  /* full width by default */
   min-width: 280px;
   max-width: 500px;
-  background: #323a45;
+  background: #494440;
   color: #f1f1f1;
-  padding: 10px;
-  border: #0032A0 solid 2px;
+  padding: 25px;
+  /* border: #0032A0 solid 2px; */
   border-radius: 8px;
   box-shadow: 0 7px 7px rgba(0,0,0,0.1);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  transition: 0.2s ease-in-out;
+}
+
+.gallery-item:hover {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.37);
+  transform: translateY(-5px);
 }
 
 /* Three columns on wider screens */
@@ -141,13 +148,17 @@ button:hover {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 7px;
+  border: solid #e4e2e0 3px;
 }
 
 .gallery-item p {
   margin-top: 10px;
   padding: 5px;
-  font-size: 14px;
+  font-size: 1.3rem;
+  text-align: center;
+  font-weight: bolder;
+  color: #f1f1f1;
 }
 
 /* Placeholder content */
