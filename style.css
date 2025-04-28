@@ -153,7 +153,7 @@ button:hover {
 }
 
 .gallery-item:hover {
-  box-shadow: 0 8px 16px rgb(11, 61, 145, 0.5); /* subtle blue glow */
+  box-shadow: 0 8px 16px rgb(33, 33, 33, 0.5); /* subtle blue glow */
   transform: scale(1.01);
 }
 
@@ -262,9 +262,9 @@ button:hover {
 .modal-content {
   background-color:#f1f1f1;
   padding: 40px 55px;
-  border: #494440 solid 4px;
+  /* border: #494440 solid 4px; */
   border-radius: 8px;
-  max-width: 90%;
+  max-width: 70%;
   max-height: 90%;
   overflow-y: auto;
   text-align: center;
