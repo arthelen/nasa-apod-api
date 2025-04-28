@@ -8,6 +8,19 @@ const endInput = document.getElementById('endDate');
 // - Makes sure you can't pick dates before 1995
 setupDateInputs(startInput, endInput);
 
+const spaceFacts = [
+  "The Hubble Space Telescope travels at about 5 miles per second!",
+  "A day on Venus is longer than a year on Venus.",
+  "Saturn could float in water because it's mostly gas!",
+  "It takes about 8 minutes for light from the Sun to reach Earth.",
+  "The footprints on the Moon will likely stay there for millions of years.",
+  "The ISS orbits Earth about every 90 minutes!",
+  "There are more stars in the universe than grains of sand on Earth!",
+  "A spoonful of a neutron star would weigh about 6 billion tons!",
+  "Space is completely silent — no air, no sound!",
+  "Earth is the only planet not named after a god."
+];
+
 const apiKey = "yR15B4EE3NbiRYfahYe2wQSyIIpyG8DgwKgfpmqF"; // NASA API key
 const gallery = document.getElementById("gallery");
 const button = document.querySelector("button");
@@ -24,7 +37,14 @@ async function fetchImages(start, end) {
     const placeholder = document.querySelector(".placeholder");
     
     // show the spinner, hide the placeholder
-    spinner.style.display = "block";
+    spinner.style.display = "flex";
+    spinner.classList.remove("fade-out");
+    spinner.classList.add("fade-in");
+
+    const factElement = document.getElementById("space-fact");
+    const randomFact = spaceFacts[Math.floor(Math.random() * spaceFacts.length)];
+    factElement.textContent = randomFact;
+
     if (placeholder) {
       placeholder.style.display = "none";
     }
@@ -34,6 +54,13 @@ async function fetchImages(start, end) {
     try {
       const response = await fetch(url);
       const data = await response.json();
+
+      spinner.classList.remove("fade-in");
+      spinner.classList.add("fade-out");
+
+      setTimeout(() => {
+        spinner.style.display = "none";
+      }, 500); // Wait until fade-out is finished
   
       // after fetch is done, hide spinner
       spinner.style.display = "none";
@@ -61,9 +88,9 @@ function displayImages(images) {
       const modalDate = document.getElementById("modalDate");
       item.classList.add("gallery-item");
       item.innerHTML = `
-        <h3>${formatDate(image.date)}</h3>
+        <h2>${formatDate(image.date)}</h2>
+        <h1>${image.title}</h1>
         <img src="${image.url}" alt="${image.title}" />
-        <p>${image.title}</p>
       `;
 
       item.addEventListener("click", () => {
@@ -101,11 +128,19 @@ function openModal(image) {
   // modalLink.href = `https://apod.nasa.gov/apod/ap${image.date.replaceAll("-", "")}.html`;
 
   modal.style.display = "flex";
+  modal.classList.remove("fade-out");
+  modal.classList.add("fade-in");
+
 }
 
 // close the modal when X is clicked
 document.querySelector(".close").addEventListener("click", () => {
-  document.getElementById("imageModal").style.display = "none";
+  modal.classList.remove("fade-in");
+  modal.classList.add("fade-out");
+
+  setTimeout(() => {
+    modal.style.display = "none";
+  }, 500); // Wait for fade-out animation
 });
 
 // close modal when clicking outside the modal content

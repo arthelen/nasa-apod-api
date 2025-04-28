@@ -1,6 +1,12 @@
 /* Global reset & box sizing */
 /*  blue: #0032A0
-    red: #E4002B */
+    red: #E4002B 
+    
+    fonts:
+    font-family: 'Inter', sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;*/
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -31,7 +37,10 @@ body {
 }
 
 /* Header */
-.site-header {
+#site-header h1 {
+  font-family: 'Inter', sans-serif;
+  color: #212121;
+  font-size: 2em;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -41,10 +50,15 @@ body {
 }
 
 h1 {
-  /* font-family: Verdana, sans-serif; */
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.2em;
+  padding: 15px;
   font-weight: bolder;
-  color: #212121;
+  color: #e4e2e0;
+}
+
+h2 {
+  margin-top: 10px;
 }
 
 /* Logo */
@@ -64,16 +78,16 @@ h1 {
 }
 
 #startDate, #endDate {
-  border: 2px solid #0b3d91;
+  border: 2px solid #494440;
   border-radius: 10px;
+  color: #212121;
 }
 
 /* Inputs and buttons */
 input[type="date"],
 button {
-  font-family: Arial, sans-serif;
-  font-weight: normal;
-  color: #aeb0b5;
+  font-family: 'Inter', sans-serif;
+  color: #494440;
   padding: 10px 15px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -83,6 +97,7 @@ button {
 }
 
 button {
+  font-family: 'Inter', sans-serif;
   background-color: #c62d1f;
   color: #f1f1f1;
   cursor: pointer;
@@ -123,11 +138,11 @@ button:hover {
   min-width: 280px;
   max-width: 500px;
   background: #494440;
-  color: #f1f1f1;
-  padding: 25px;
-  /* border: #0032A0 solid 2px; */
+  color: #f9e0de;
+  padding: 25px 37px;
+  /* border: #99231b solid 3px; */
   border-radius: 8px;
-  TEXT-ALIGN: CENTER;
+  text-align: center;
   box-shadow: 0 7px 7px rgba(0,0,0,0.1);
   overflow: hidden;
   display: flex;
@@ -137,7 +152,7 @@ button:hover {
 
 .gallery-item:hover {
   box-shadow: 0 10px 20px rgba(0,0,0,0.37);
-  transform: translateY(-5px);
+  transform: scale(1.01);
 }
 
 /* Three columns on wider screens */
@@ -161,7 +176,7 @@ button:hover {
   font-size: 1.3rem;
   text-align: center;
   font-weight: bolder;
-  color: #f1f1f1;
+  color: #494440;
 }
 
 /* Placeholder content */
@@ -169,16 +184,18 @@ button:hover {
   flex: 1 1 100%;
   text-align: center;
   padding: 40px;
-  color: #666;
+  color: #0b3d91;
 }
 
-.placeholder-icon {
-  font-size: 48px;
-  margin-bottom: 20px;
+#placeholder-icon {
+  width: 70px;
+  height: auto;
+  /* margin-bottom: 20px; */
 }
 
 .spinner {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 20px;
@@ -186,14 +203,43 @@ button:hover {
 }
 
 .spinner img {
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: auto;
   animation: spin 2s linear infinite;
 }
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Fade in and fade out keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Reusable classes */
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s ease forwards;
+}
+
+.space-fact {
+  margin-top: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #0b3d91;
+  text-align: center;
+  max-width: 300px;
 }
 
 /* modal */
@@ -205,7 +251,7 @@ button:hover {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0,0,0,0.77);
+  background-color: rgba(0,0,0,0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -213,7 +259,8 @@ button:hover {
 
 .modal-content {
   background-color:#e4e2e0;
-  padding: 40px;
+  padding: 40px 55px;
+  border: #494440 solid 4px;
   border-radius: 8px;
   max-width: 90%;
   max-height: 90%;
@@ -232,7 +279,7 @@ button:hover {
 }
 
 .modal-content h2 {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
   margin-top: 10px;
   font-size: 2em;
   color: #494440;
@@ -279,11 +326,11 @@ button:hover {
   top: 10px;
   right: 15px;
   font-size: 30px;
-  color: #99231b;
+  color: #c62d1f;
   cursor: pointer;
   transition: 0.2s ease-in-out;
 }
 
 .close:hover {
-  color: #c62d1f;
+  color: #99231b;
 }

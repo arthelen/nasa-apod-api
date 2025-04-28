@@ -11,7 +11,7 @@
 <body>
   <div class="container">
     <img src="img/nasa-logo-no-bg.png" alt="NASA Logo" class="logo" />
-    <header class="site-header">
+    <header id="site-header">
       <h1>Astronomy Picture of the Day (APOD)</h1>
     </header>
 
@@ -23,10 +23,12 @@
 
     <div id="gallery" class="gallery">
       <div class="spinner" id="spinner" style="display: none;">
-        <img id="spinner-image" src="img/spinner-planet.png" alt="Loading..." />
-      </div>      
+        <img id="spinner-image" src="img/loading-planet.png" alt="Blue planet with rings icon" />
+        <p id="space-fact" class="space-fact"></p>
+      </div>
+           
       <div class="placeholder">
-        <div class="placeholder-icon">🔭</div>
+        <img id="placeholder-icon" src="img/loading-planet.png" alt="Blue planet with rings icon" />
         <p>Select a date range above and click "Get Space Images" to explore the cosmos!</p>
       </div>
     </div>    
@@ -37,8 +39,8 @@
     <div class="modal-content">
       <span class="close">&times;</span>
       <img id="modalImage" src="" alt="Full Image" />
-      <h2 id="modalTitle"></h2>
       <p id="modalDate"></p>
+      <h2 id="modalTitle"></h2>
       <p id="modalDescription"></p>
       <p id="modalCopyright"></p>
       <!-- <a id="modalLink" href="" target="_blank" class="modal-link">View on NASA APOD</a> -->
