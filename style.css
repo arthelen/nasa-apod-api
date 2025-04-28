@@ -1,4 +1,6 @@
 /* Global reset & box sizing */
+/*  blue: #0032A0
+    red: #E4002B */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -103,8 +105,9 @@ button:hover {
   max-width: 500px;
   background: white;
   padding: 10px;
+  border: #0032A0 solid 2px;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 7px 7px rgba(0,0,0,0.1);
   overflow: hidden;
   display: flex;
   flex-direction: column;
