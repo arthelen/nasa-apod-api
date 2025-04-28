@@ -88,9 +88,9 @@ function displayImages(images) {
       const modalDate = document.getElementById("modalDate");
       item.classList.add("gallery-item");
       item.innerHTML = `
+        <img src="${image.url}" alt="${image.title}" />
         <h2>${formatDate(image.date)}</h2>
         <h1>${image.title}</h1>
-        <img src="${image.url}" alt="${image.title}" />
       `;
 
       item.addEventListener("click", () => {

@@ -17,7 +17,7 @@
 body {
   /* font-family: Arial, sans-serif; */
   font-family: 'Source Sans Pro', sans-serif;
-  background-color: #e4e2e0;
+  background-color: #dce4ef;
   padding: 20px;
   color: #212121;
 }
@@ -51,13 +51,15 @@ body {
 
 h1 {
   font-family: 'Inter', sans-serif;
-  font-size: 1.2em;
+  font-size: 1.4em;
   padding: 15px;
   font-weight: bolder;
-  color: #e4e2e0;
+  color: #494440;
 }
 
 h2 {
+  color: #c62d1f;
+  font-size: 1.1em;
   margin-top: 10px;
 }
 
@@ -101,6 +103,7 @@ button {
   background-color: #c62d1f;
   color: #f1f1f1;
   cursor: pointer;
+  border: none;
   border-radius: 10px;
   transition: 0.2s ease-in-out;
   font-weight: bolder;
@@ -137,21 +140,20 @@ button:hover {
   flex: 1 1 100%;  /* full width by default */
   min-width: 280px;
   max-width: 500px;
-  background: #494440;
-  color: #f9e0de;
   padding: 25px 37px;
-  /* border: #99231b solid 3px; */
-  border-radius: 8px;
   text-align: center;
-  box-shadow: 0 7px 7px rgba(0,0,0,0.1);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   transition: 0.2s ease-in-out;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  color: #212121;
 }
 
 .gallery-item:hover {
-  box-shadow: 0 10px 20px rgba(0,0,0,0.37);
+  box-shadow: 0 8px 16px rgb(11, 61, 145, 0.5); /* subtle blue glow */
   transform: scale(1.01);
 }
 
@@ -258,7 +260,7 @@ button:hover {
 }
 
 .modal-content {
-  background-color:#e4e2e0;
+  background-color:#f1f1f1;
   padding: 40px 55px;
   border: #494440 solid 4px;
   border-radius: 8px;
@@ -291,7 +293,7 @@ button:hover {
   color: #212121;
 }
 
-.modal-link {
+/* .modal-link {
   display: inline-block;
   margin-top: 15px;
   font-size: 18px;
@@ -303,7 +305,7 @@ button:hover {
 
 .modal-link:hover {
   text-decoration: underline;
-}
+} */
 
 #modalDate {
   font-size: 1.4em;
