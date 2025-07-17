@@ -49,6 +49,7 @@ async function fetchImages(start, end) {
       placeholder.style.display = "none";
     }
   
+    // Use start and end dates exactly as selected by the user
     const url = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}&start_date=${start}&end_date=${end}`;
   
     try {
@@ -81,24 +82,47 @@ async function fetchImages(start, end) {
     }
   }  
 
+// Updated to handle both images and videos
 function displayImages(images) {
   images.forEach((image) => {
-    if (image.media_type === "image") { // only show images, not videos
-      const item = document.createElement("div");
-      const modalDate = document.getElementById("modalDate");
-      item.classList.add("gallery-item");
+    const item = document.createElement("div");
+    item.classList.add("gallery-item");
+
+    if (image.media_type === "image") {
       item.innerHTML = `
         <img src="${image.url}" alt="${image.title}" />
         <h2>${formatDate(image.date)}</h2>
         <h1>${image.title}</h1>
       `;
-
-      item.addEventListener("click", () => {
-        openModal(image);
-      });
-
-      gallery.appendChild(item);
+    } else if (image.media_type === "video") {
+      // Try to use thumbnail_url if available, otherwise embed video
+      if (image.thumbnail_url) {
+        item.innerHTML = `
+          <img src="${image.thumbnail_url}" alt="${image.title}" />
+          <h2>${formatDate(image.date)}</h2>
+          <h1>${image.title}</h1>
+          <p>Video</p>
+        `;
+      } else {
+        item.innerHTML = `
+          <div style="width:100%;height:200px;display:flex;align-items:center;justify-content:center;background:#000;">
+            <iframe src="${image.url}" frameborder="0" allowfullscreen style="width:100%;height:100%;"></iframe>
+          </div>
+          <h2>${formatDate(image.date)}</h2>
+          <h1>${image.title}</h1>
+          <p>Video</p>
+        `;
+      }
+    } else {
+      // Skip unknown media types
+      return;
     }
+
+    item.addEventListener("click", () => {
+      openModal(image);
+    });
+
+    gallery.appendChild(item);
   });
 }
 
@@ -116,16 +140,49 @@ function openModal(image) {
   const modalCopyright = document.getElementById("modalCopyright");
   // const modalLink = document.getElementById("modalLink");
 
-  modalImg.src = image.url;
+  // Clear previous modal content
+  modalImg.style.display = "none";
+  // Remove any previous video iframes
+  const prevVideo = document.getElementById("modalVideo");
+  if (prevVideo) prevVideo.remove();
+
   modalTitle.textContent = image.title;
   modalDate.textContent = `${formatDate(image.date)}`;
   modalDescription.textContent = image.explanation;
-
   modalCopyright.textContent = image.copyright 
     ? `Photo by: ${image.copyright}`
     : "";
 
-  // modalLink.href = `https://apod.nasa.gov/apod/ap${image.date.replaceAll("-", "")}.html`;
+  if (image.media_type === "image") {
+    modalImg.src = image.url;
+    modalImg.style.display = "block";
+  } else if (image.media_type === "video") {
+    // Hide image, show video
+    modalImg.src = "";
+    modalImg.style.display = "none";
+    // Use thumbnail if available, otherwise embed video
+    let videoElem;
+    if (image.thumbnail_url) {
+      videoElem = document.createElement("img");
+      videoElem.id = "modalVideo";
+      videoElem.src = image.thumbnail_url;
+      videoElem.alt = image.title;
+      videoElem.style.width = "100%";
+      videoElem.style.maxHeight = "400px";
+      videoElem.style.borderRadius = "7px";
+    } else {
+      videoElem = document.createElement("iframe");
+      videoElem.id = "modalVideo";
+      videoElem.src = image.url;
+      videoElem.frameBorder = "0";
+      videoElem.allowFullscreen = true;
+      videoElem.style.width = "100%";
+      videoElem.style.height = "400px";
+      videoElem.style.borderRadius = "7px";
+    }
+    // Insert video element before modalTitle
+    modalImg.parentNode.insertBefore(videoElem, modalTitle);
+  }
 
   modal.style.display = "flex";
   modal.classList.remove("fade-out");
