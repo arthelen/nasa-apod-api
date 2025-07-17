@@ -2,10 +2,7 @@
 const startInput = document.getElementById('startDate');
 const endInput = document.getElementById('endDate');
 
-// Set up the date pickers with:
-// - A start date 9 days ago
-// - Today as the end date
-// - Makes sure you can't pick dates before 1995
+// Set up the date pickers with default range and limits
 setupDateInputs(startInput, endInput);
 
 const spaceFacts = [
@@ -28,61 +25,67 @@ const button = document.querySelector("button");
 button.addEventListener("click", () => {
   const startDate = startInput.value;
   const endDate = endInput.value;
-  
+
+  if (!startDate || !endDate) {
+    alert("Please select both a start and end date.");
+    return;
+  }
+
   fetchImages(startDate, endDate);
 });
 
 async function fetchImages(start, end) {
-    const spinner = document.getElementById("spinner");
-    const placeholder = document.querySelector(".placeholder");
-    
-    // show the spinner, hide the placeholder
-    spinner.style.display = "flex";
-    spinner.classList.remove("fade-out");
-    spinner.classList.add("fade-in");
+  const spinner = document.getElementById("spinner");
+  const placeholder = document.querySelector(".placeholder");
 
-    const factElement = document.getElementById("space-fact");
-    const randomFact = spaceFacts[Math.floor(Math.random() * spaceFacts.length)];
-    factElement.textContent = randomFact;
+  spinner.style.display = "flex";
+  spinner.classList.remove("fade-out");
+  spinner.classList.add("fade-in");
 
-    if (placeholder) {
-      placeholder.style.display = "none";
-    }
-  
-    // Use start and end dates exactly as selected by the user
-    const url = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}&start_date=${start}&end_date=${end}`;
-  
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
+  const factElement = document.getElementById("space-fact");
+  const randomFact = spaceFacts[Math.floor(Math.random() * spaceFacts.length)];
+  factElement.textContent = randomFact;
 
-      spinner.classList.remove("fade-in");
-      spinner.classList.add("fade-out");
+  if (placeholder) {
+    placeholder.style.display = "none";
+  }
 
-      setTimeout(() => {
-        spinner.style.display = "none";
-      }, 500); // Wait until fade-out is finished
-  
-      // after fetch is done, hide spinner
+  const url = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}&start_date=${start}&end_date=${end}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    spinner.classList.remove("fade-in");
+    spinner.classList.add("fade-out");
+
+    setTimeout(() => {
       spinner.style.display = "none";
-  
-      if (data.error) {
-        gallery.innerHTML = `<p>Error: ${data.error.message}</p>`;
-        return;
-      }
-  
-      // clear out previous gallery items (but keep spinner in DOM)
-      gallery.querySelectorAll(".gallery-item").forEach((item) => item.remove());
-  
-      displayImages(data);
-    } catch (error) {
-      spinner.style.display = "none"; // hide spinner even if there’s an error
-      gallery.innerHTML = `<p>Something went wrong. Please try again later.</p>`;
-      console.error("Error fetching NASA data:", error);
-    }
-  }  
+    }, 500);
 
-// Updated to handle both images and videos
+    if (data.error) {
+      gallery.innerHTML = `<p>Error: ${data.error.message}</p>`;
+      return;
+    }
+
+    gallery.querySelectorAll(".gallery-item").forEach((item) => item.remove());
+
+    console.log("User selected:", start, "to", end);
+    console.log("Returned dates:", data.map(i => i.date).join(", "));
+
+    const filteredData = data.filter(item => {
+      // Manually trim any off-by-one-day rogue entry
+      return item.date >= start && item.date <= end;
+    });
+
+    displayImages(filteredData);
+  } catch (error) {
+    spinner.style.display = "none";
+    gallery.innerHTML = `<p>Something went wrong. Please try again later.</p>`;
+    console.error("Error fetching NASA data:", error);
+  }
+}
+
 function displayImages(images) {
   images.forEach((image) => {
     const item = document.createElement("div");
@@ -95,7 +98,6 @@ function displayImages(images) {
         <h1>${image.title}</h1>
       `;
     } else if (image.media_type === "video") {
-      // Try to use thumbnail_url if available, otherwise embed video
       if (image.thumbnail_url) {
         item.innerHTML = `
           <img src="${image.thumbnail_url}" alt="${image.title}" />
@@ -114,7 +116,6 @@ function displayImages(images) {
         `;
       }
     } else {
-      // Skip unknown media types
       return;
     }
 
@@ -130,7 +131,7 @@ function formatDate(dateString) {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
 }
-  
+
 function openModal(image) {
   const modal = document.getElementById("imageModal");
   const modalImg = document.getElementById("modalImage");
@@ -138,16 +139,13 @@ function openModal(image) {
   const modalDate = document.getElementById("modalDate");
   const modalDescription = document.getElementById("modalDescription");
   const modalCopyright = document.getElementById("modalCopyright");
-  // const modalLink = document.getElementById("modalLink");
 
-  // Clear previous modal content
   modalImg.style.display = "none";
-  // Remove any previous video iframes
   const prevVideo = document.getElementById("modalVideo");
   if (prevVideo) prevVideo.remove();
 
   modalTitle.textContent = image.title;
-  modalDate.textContent = `${formatDate(image.date)}`;
+  modalDate.textContent = formatDate(image.date);
   modalDescription.textContent = image.explanation;
   modalCopyright.textContent = image.copyright 
     ? `Photo by: ${image.copyright}`
@@ -157,10 +155,6 @@ function openModal(image) {
     modalImg.src = image.url;
     modalImg.style.display = "block";
   } else if (image.media_type === "video") {
-    // Hide image, show video
-    modalImg.src = "";
-    modalImg.style.display = "none";
-    // Use thumbnail if available, otherwise embed video
     let videoElem;
     if (image.thumbnail_url) {
       videoElem = document.createElement("img");
@@ -180,30 +174,36 @@ function openModal(image) {
       videoElem.style.height = "400px";
       videoElem.style.borderRadius = "7px";
     }
-    // Insert video element before modalTitle
     modalImg.parentNode.insertBefore(videoElem, modalTitle);
   }
 
   modal.style.display = "flex";
   modal.classList.remove("fade-out");
   modal.classList.add("fade-in");
-
 }
 
-// close the modal when X is clicked
 document.querySelector(".close").addEventListener("click", () => {
+  const modal = document.getElementById("imageModal");
   modal.classList.remove("fade-in");
   modal.classList.add("fade-out");
 
+  // Wait for the fade-out animation to complete before hiding the modal
   setTimeout(() => {
     modal.style.display = "none";
-  }, 500); // Wait for fade-out animation
+    modal.classList.remove("fade-out"); // Reset the class for future use
+  }, 500); // Match the duration of the fade-out animation
 });
 
-// close modal when clicking outside the modal content
+// Close modal when clicking outside the modal content
 window.addEventListener("click", (e) => {
   const modal = document.getElementById("imageModal");
   if (e.target === modal) {
-    modal.style.display = "none";
+    modal.classList.remove("fade-in");
+    modal.classList.add("fade-out");
+
+    setTimeout(() => {
+      modal.style.display = "none";
+      modal.classList.remove("fade-out");
+    }, 500);
   }
 });
