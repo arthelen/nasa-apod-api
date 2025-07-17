@@ -2,7 +2,10 @@
 const startInput = document.getElementById('startDate');
 const endInput = document.getElementById('endDate');
 
-// Set up the date pickers with default range and limits
+// Set up the date pickers with:
+// - A start date 9 days ago
+// - Today as the end date
+// - Makes sure you can't pick dates before 1995
 setupDateInputs(startInput, endInput);
 
 const spaceFacts = [
@@ -14,8 +17,7 @@ const spaceFacts = [
   "The ISS orbits Earth about every 90 minutes!",
   "There are more stars in the universe than grains of sand on Earth!",
   "A spoonful of a neutron star would weigh about 6 billion tons!",
-  "Space is completely silent — no air, no sound!",
-  "Earth is the only planet not named after a god."
+  "Space is completely silent — no air, no sound!"
 ];
 
 const apiKey = "yR15B4EE3NbiRYfahYe2wQSyIIpyG8DgwKgfpmqF"; // NASA API key
@@ -25,33 +27,34 @@ const button = document.querySelector("button");
 button.addEventListener("click", () => {
   const startDate = startInput.value;
   const endDate = endInput.value;
-
-  if (!startDate || !endDate) {
-    alert("Please select both a start and end date.");
-    return;
-  }
-
+  
   fetchImages(startDate, endDate);
 });
 
 async function fetchImages(start, end) {
   const spinner = document.getElementById("spinner");
   const placeholder = document.querySelector(".placeholder");
+  const funFactContainer = document.getElementById("fun-fact-container");
+  const funFactElement = document.getElementById("fun-fact");
+  const loadingMessage = document.getElementById("loading-message");
 
+  // Show the spinner and update the loading message
   spinner.style.display = "flex";
   spinner.classList.remove("fade-out");
   spinner.classList.add("fade-in");
+  loadingMessage.textContent = "Loading...";
 
-  const factElement = document.getElementById("space-fact");
+  // Hide the placeholder and fun fact container while loading
+  if (placeholder) placeholder.style.display = "none";
+  funFactContainer.classList.remove("fade-in");
+  funFactContainer.classList.add("fade-out");
+
+  // Select a random fun fact
   const randomFact = spaceFacts[Math.floor(Math.random() * spaceFacts.length)];
-  factElement.textContent = randomFact;
-
-  if (placeholder) {
-    placeholder.style.display = "none";
-  }
+  funFactElement.textContent = randomFact;
 
   const url = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}&start_date=${start}&end_date=${end}`;
-
+  
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -68,15 +71,16 @@ async function fetchImages(start, end) {
       return;
     }
 
+    // Filter the data to ensure it matches the exact date range
+    const filteredData = data.filter(item => item.date >= start && item.date <= end);
+
+    // Clear out previous gallery items
     gallery.querySelectorAll(".gallery-item").forEach((item) => item.remove());
 
-    console.log("User selected:", start, "to", end);
-    console.log("Returned dates:", data.map(i => i.date).join(", "));
-
-    const filteredData = data.filter(item => {
-      // Manually trim any off-by-one-day rogue entry
-      return item.date >= start && item.date <= end;
-    });
+    // Display the fun fact container with fade-in animation
+    funFactContainer.style.display = "block";
+    funFactContainer.classList.remove("fade-out");
+    funFactContainer.classList.add("fade-in");
 
     displayImages(filteredData);
   } catch (error) {
@@ -84,7 +88,7 @@ async function fetchImages(start, end) {
     gallery.innerHTML = `<p>Something went wrong. Please try again later.</p>`;
     console.error("Error fetching NASA data:", error);
   }
-}
+}  
 
 function displayImages(images) {
   images.forEach((image) => {
@@ -98,6 +102,7 @@ function displayImages(images) {
         <h1>${image.title}</h1>
       `;
     } else if (image.media_type === "video") {
+      // Use thumbnail if available, otherwise show a placeholder
       if (image.thumbnail_url) {
         item.innerHTML = `
           <img src="${image.thumbnail_url}" alt="${image.title}" />
@@ -116,6 +121,7 @@ function displayImages(images) {
         `;
       }
     } else {
+      // Skip unknown media types
       return;
     }
 
@@ -131,7 +137,7 @@ function formatDate(dateString) {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
 }
-
+  
 function openModal(image) {
   const modal = document.getElementById("imageModal");
   const modalImg = document.getElementById("modalImage");
@@ -140,6 +146,7 @@ function openModal(image) {
   const modalDescription = document.getElementById("modalDescription");
   const modalCopyright = document.getElementById("modalCopyright");
 
+  // Clear previous modal content
   modalImg.style.display = "none";
   const prevVideo = document.getElementById("modalVideo");
   if (prevVideo) prevVideo.remove();
@@ -155,6 +162,11 @@ function openModal(image) {
     modalImg.src = image.url;
     modalImg.style.display = "block";
   } else if (image.media_type === "video") {
+    // Hide image, show video
+    modalImg.src = "";
+    modalImg.style.display = "none";
+
+    // Use thumbnail if available, otherwise embed video
     let videoElem;
     if (image.thumbnail_url) {
       videoElem = document.createElement("img");
@@ -182,28 +194,20 @@ function openModal(image) {
   modal.classList.add("fade-in");
 }
 
+// close the modal when X is clicked
 document.querySelector(".close").addEventListener("click", () => {
-  const modal = document.getElementById("imageModal");
   modal.classList.remove("fade-in");
   modal.classList.add("fade-out");
 
-  // Wait for the fade-out animation to complete before hiding the modal
   setTimeout(() => {
     modal.style.display = "none";
-    modal.classList.remove("fade-out"); // Reset the class for future use
-  }, 500); // Match the duration of the fade-out animation
+  }, 500); // Wait for fade-out animation
 });
 
-// Close modal when clicking outside the modal content
+// close modal when clicking outside the modal content
 window.addEventListener("click", (e) => {
   const modal = document.getElementById("imageModal");
   if (e.target === modal) {
-    modal.classList.remove("fade-in");
-    modal.classList.add("fade-out");
-
-    setTimeout(() => {
-      modal.style.display = "none";
-      modal.classList.remove("fade-out");
-    }, 500);
+    modal.style.display = "none";
   }
 });
